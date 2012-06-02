@@ -15,7 +15,6 @@ import org.wintrisstech.irobot.ioio.IRobotCreateInterface;
  */
 public class Lada extends IRobotCreateAdapter
 {
-
     private static final String TAG = "Lada";
     private final Dashboard dashboard;
     /*
@@ -28,7 +27,6 @@ public class Lada extends IRobotCreateAdapter
      */
     private static enum State
     {
-
         STRAIGHT_FORWARD,
         LEFT_BACKWARD,
         RIGHT_BACKWARD,
@@ -41,7 +39,6 @@ public class Lada extends IRobotCreateAdapter
      */
     private static enum Event
     {
-
         BACKUP_DONE,
         RIGHT_BUMP,
         LEFT_BUMP,
@@ -77,7 +74,7 @@ public class Lada extends IRobotCreateAdapter
 
     public void initialize() throws ConnectionLostException
     {
-        dashboard.log("===========Start===========");
+        dashboard.log("===========Spicy Skating Monkeys ahoy!===========");
         heading = 0;
         backingUp = false;
         presentState = State.STRAIGHT_FORWARD;
@@ -92,7 +89,7 @@ public class Lada extends IRobotCreateAdapter
      */
     public void loop() throws ConnectionLostException
     {
-        SystemClock.sleep(100); // Comment out or adjust sleep time as needed
+        //SystemClock.sleep(100); // Comment out or adjust sleep time as needed
         readSensors(SENSORS_GROUP_ID6);
         heading += getAngle();
         if (isBumpLeft() && isBumpRight())
@@ -135,10 +132,12 @@ public class Lada extends IRobotCreateAdapter
         {
             case STRAIGHT_FORWARD:
                 dashboard.log("Straight forward");
-                dashboard.speak("going straight forward");
+                dashboard.speak("lets go home");
                 dashboard.log("Heading = " + heading);
                 backingUp = false;
                 driveDirect(speed, speed);
+//                dashboard.speak("SPIN");
+//                smSpin();
                 break;
             case LEFT_BACKWARD:
                 dashboard.log("Left backward");
@@ -246,5 +245,58 @@ public class Lada extends IRobotCreateAdapter
     public void stop() throws ConnectionLostException
     {
         driveDirect(0, 0); // stop the Create
+    }
+
+    private void smKeepGoing() throws ConnectionLostException
+    {
+        driveDirect(300, 300);
+    }
+
+    private void smBackUp() throws ConnectionLostException
+    {
+        driveDirect(-300, -300);
+    }
+
+    private void smDrive(int left, int right) throws ConnectionLostException
+    {
+        driveDirect(right, left);
+    }
+
+    private void smBeaconSearcher() throws ConnectionLostException
+    {
+        // readSensors(SENSORS_GROUP_ID6);
+        SystemClock.sleep(300);
+        dashboard.speak("bacon");
+        int iRbyte = this.getInfraredByte();
+        dashboard.log("irb=" + iRbyte);
+        if (iRbyte == 252)
+        {
+            dashboard.speak("both straight");
+            smDrive(100, 100);
+        } else if (iRbyte == 242)
+        {
+            dashboard.speak("Force straight");
+            smDrive(100, 100);
+        } else if (iRbyte == 244)
+        {
+            dashboard.speak("green right");
+            smDrive(100, 150);
+        } else if (iRbyte == 248)
+        {
+            dashboard.speak("red left");
+            smDrive(150, 100);
+        } else if (iRbyte == 246)
+        {
+            dashboard.speak("green force right slow");
+            smDrive(25, 75);
+        } else if (iRbyte == 250)
+        {
+            dashboard.speak("red force left slow");
+            smDrive(75, 25);
+        } else
+        {
+            dashboard.speak("poo");
+            smDrive(100, -100);
+        }
     }
 }

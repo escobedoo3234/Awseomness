@@ -70,17 +70,17 @@ public class Dashboard extends IOIOActivity implements TextToSpeech.OnInitListen
     @Override
     public void onPause()
     {
-        if (kalina != null)
-        {
-            log("Pausing");
-            try
-            {
-                kalina.stop();
-            } catch (ConnectionLostException ex)
-            {
-                //Nothing much we can do. Let's hope that kalina is not moving!
-            }
-        }
+//        if (kalina != null)
+//        {
+//            log("Pausing");
+//            try
+//            {
+//                kalina.stop();
+//            } catch (ConnectionLostException ex)
+//            {
+//                Nothing much we can do. Let's hope that kalina is not moving!
+//            }
+//        }
         super.onPause();
     }
 

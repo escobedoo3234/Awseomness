@@ -51,22 +51,47 @@ public class Lada extends IRobotCreateAdapter
                     58, 10
                 });
     }
-    
+
     public void initialize() throws ConnectionLostException
     {
         dashboard.speak("Skating Monkeys");
         heading = 0;
         backingUp = false;
-        
-        
+
+
         readSensors(SENSORS_GROUP_ID6);//Resets all counters in the Create to 0.
 //        driveDirect(speed, speed);
     }
+
+//    public void loop() throws ConnectionLostException
+//    {
+//        readSensors(SENSORS_GROUP_ID6);
+//        int iRbyte = this.getInfraredByte();
+//        if (isBumpRight())
+//        {
+//            for (int i = 0; i < 10; i++)
+//            { // back up a bit
+//                driveDirect(-speed, -speed);
+//            }
+//            for (int i = 0; i < 12; i++)
+//            { // turn 90 degrees to right
+//                driveDirect(-speed, speed);
+//            }
+//        }
+//        if (iRbyte != 255)
+//        {
+//            smBeaconSearcher2(iRbyte);
+//        } else
+//        {
+//            driveDirect(speed, speed / 3);
+//        }
+//    }
+
     public void loop() throws ConnectionLostException
     {
         readSensors(SENSORS_GROUP_ID6);
         int iRbyte = this.getInfraredByte();
-        
+
         if (isBumpRight() && isBumpLeft())
         { // front bump
             dashboard.log("" + getDistance());
@@ -82,10 +107,11 @@ public class Lada extends IRobotCreateAdapter
             if (operationMaze)
             {
                 // always turn the same direction after back up
-                for (int j = 0; j < 12; j++) {
-                    driveDirect( -speed, speed );
+                for (int j = 0; j < 12; j++)
+                {
+                    driveDirect(-speed, speed);
                     readSensors(SENSORS_GROUP_ID6);
-                } 
+                }
             } else
             { // turn in random direction following back up
                 if (rand.nextBoolean())
@@ -125,7 +151,7 @@ public class Lada extends IRobotCreateAdapter
                 }
             }
         }
-        if ( count > 0 && iRSearch && count % 500 == 0)
+        if (count > 0 && iRSearch && count % 500 == 0)
         { // call the beacon search every 100th iteration
             smBeaconSearcher();
         }
@@ -152,7 +178,7 @@ public class Lada extends IRobotCreateAdapter
             readSensors(SENSORS_GROUP_ID6);
             iRbyte = this.getInfraredByte();
             //int currentAngle = getAngle();
-            
+
             //dashboard.log("currentAngle= " + currentAngle);
             driveDirect(200, -200);
         }
@@ -170,7 +196,7 @@ public class Lada extends IRobotCreateAdapter
             {
                 driveDirect(100, 100);
             }
-            
+
         } else if (iRbyte == 244)
         {
             dashboard.log("green right");
@@ -178,7 +204,7 @@ public class Lada extends IRobotCreateAdapter
             {
                 driveDirect(200, 100);
             }
-            
+
         } else if (iRbyte == 248)
         {
             dashboard.log("red left");
@@ -186,7 +212,7 @@ public class Lada extends IRobotCreateAdapter
             {
                 driveDirect(100, 200);
             }
-            
+
         } else if (iRbyte == 246)
         {
             dashboard.log("green force right slow");
@@ -194,7 +220,7 @@ public class Lada extends IRobotCreateAdapter
             {
                 driveDirect(75, 25);
             }
-            
+
         } else if (iRbyte == 250)
         {
             dashboard.log("red force left slow");
@@ -202,7 +228,59 @@ public class Lada extends IRobotCreateAdapter
             {
                 driveDirect(25, 75);
             }
-            
+
+        }
+    }
+
+    private void smBeaconSearcher2(int iRbyte) throws ConnectionLostException
+    {
+        if (iRbyte == 252)
+        {
+            dashboard.log("both straight");
+            for (int i = 0; i < 10; i++)
+            {
+                driveDirect(100, 100);
+            }
+        } else if (iRbyte == 242)
+        {
+            dashboard.log("Force straight");
+            for (int i = 0; i < 10; i++)
+            {
+                driveDirect(100, 100);
+            }
+
+        } else if (iRbyte == 244)
+        {
+            dashboard.log("green right");
+            for (int i = 0; i < 10; i++)
+            {
+                driveDirect(200, 100);
+            }
+
+        } else if (iRbyte == 248)
+        {
+            dashboard.log("red left");
+            for (int i = 0; i < 10; i++)
+            {
+                driveDirect(100, 200);
+            }
+
+        } else if (iRbyte == 246)
+        {
+            dashboard.log("green force right slow");
+            for (int i = 0; i < 10; i++)
+            {
+                driveDirect(75, 25);
+            }
+
+        } else if (iRbyte == 250)
+        {
+            dashboard.log("red force left slow");
+            for (int i = 0; i < 10; i++)
+            {
+                driveDirect(25, 75);
+            }
+
         }
     }
 }

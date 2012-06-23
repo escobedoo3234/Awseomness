@@ -20,7 +20,7 @@ public class Lada extends IRobotCreateAdapter
     /*
      * State variables:
      */
-    private int speed = 300; // The normal speed of the Lada when going straight
+    private int speed = 500; // The normal speed of the Lada when going straight
     private int heading = 0;
     private long count = 0;
     private static final int howFarToGoBackWhenBumped = 50;
@@ -29,7 +29,7 @@ public class Lada extends IRobotCreateAdapter
     //TODO Add variableas as needed, e.g., boolean redBouyInSight, boolean greenBouyInSight, etc
     private Random rand = new Random();
     private boolean operationMaze = false;
-    private boolean iRSearch = true;
+    private boolean iRSearch = false;
 
     /**
      * Constructs a Lada, an amazing machine!
@@ -60,10 +60,14 @@ public class Lada extends IRobotCreateAdapter
         
         
         readSensors(SENSORS_GROUP_ID6);//Resets all counters in the Create to 0.
-        driveDirect(speed, speed);
+//        driveDirect(speed, speed);
     }
     
-    public void loop() throws ConnectionLostException
+    public void loop( ) throws ConnectionLostException
+    {
+        drive(speed, 0);
+    }
+    public void loop2() throws ConnectionLostException
     {
         readSensors(SENSORS_GROUP_ID6);
         int iRbyte = this.getInfraredByte();
@@ -131,7 +135,7 @@ public class Lada extends IRobotCreateAdapter
             smBeaconSearcher();
         }
         //  go forward
-        driveDirect(speed, speed);
+        drive(speed, 0);
         count++;
     }
 

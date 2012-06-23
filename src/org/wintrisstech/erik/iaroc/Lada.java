@@ -65,7 +65,7 @@ public class Lada extends IRobotCreateAdapter
     
     public void loop( ) throws ConnectionLostException
     {
-        drive(speed, 0);
+        drive(speed, 32767);
     }
     public void loop2() throws ConnectionLostException
     {

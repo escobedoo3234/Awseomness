@@ -45,7 +45,7 @@ public class Lada extends IRobotCreateAdapter
         super(create);
         this.dashboard = dashboard;
         dashboard.speak("Lada");
-        dashboard.log("Lada");
+        dashboard.log("Lada V2");
         song(0, new int[]
                 {
                     58, 10
@@ -62,12 +62,7 @@ public class Lada extends IRobotCreateAdapter
         readSensors(SENSORS_GROUP_ID6);//Resets all counters in the Create to 0.
 //        driveDirect(speed, speed);
     }
-    
-    public void loop( ) throws ConnectionLostException
-    {
-        drive(speed, 32767);
-    }
-    public void loop2() throws ConnectionLostException
+    public void loop() throws ConnectionLostException
     {
         readSensors(SENSORS_GROUP_ID6);
         int iRbyte = this.getInfraredByte();
@@ -130,12 +125,13 @@ public class Lada extends IRobotCreateAdapter
                 }
             }
         }
-        if (iRSearch && count % 100 == 0)
+        if ( count > 0 && iRSearch && count % 500 == 0)
         { // call the beacon search every 100th iteration
             smBeaconSearcher();
         }
         //  go forward
-        drive(speed, 0);
+        //drive(speed, 0);
+        driveDirect(speed, speed);
         count++;
     }
 

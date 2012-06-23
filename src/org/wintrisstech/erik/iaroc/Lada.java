@@ -22,12 +22,14 @@ public class Lada extends IRobotCreateAdapter
      */
     private int speed = 300; // The normal speed of the Lada when going straight
     private int heading = 0;
-    private long count;
+    private long count = 0;
     private static final int howFarToGoBackWhenBumped = 50;
     private int howFarBacked = 0;
     private boolean backingUp = false;
     //TODO Add variableas as needed, e.g., boolean redBouyInSight, boolean greenBouyInSight, etc
     private Random rand = new Random();
+    private boolean operationMaze = false;
+    private boolean iRSearch = true;
 
     /**
      * Constructs a Lada, an amazing machine!
@@ -49,27 +51,27 @@ public class Lada extends IRobotCreateAdapter
                     58, 10
                 });
     }
-
+    
     public void initialize() throws ConnectionLostException
     {
         dashboard.speak("Skating Monkeys");
         heading = 0;
         backingUp = false;
-
-
+        
+        
         readSensors(SENSORS_GROUP_ID6);//Resets all counters in the Create to 0.
         driveDirect(speed, speed);
     }
-
+    
     public void loop() throws ConnectionLostException
     {
-        //SystemClock.sleep(100); // Comment out or adjust sleep time as needed
         readSensors(SENSORS_GROUP_ID6);
         int iRbyte = this.getInfraredByte();
-
+        
         if (isBumpRight() && isBumpLeft())
-        {
+        { // front bump
             dashboard.log("" + getDistance());
+            // back up a bit
             for (int i = 0; i < howFarToGoBackWhenBumped / 5; i++)
             {
                 dashboard.speak("bam boom");
@@ -78,44 +80,59 @@ public class Lada extends IRobotCreateAdapter
             }
             dashboard.speak("thats far enough");
             dashboard.log(">" + getDistance());
-            if (rand.nextBoolean())
+            if (operationMaze)
             {
-                for (int j = 0; j < howFarToGoBackWhenBumped - 15; j++)
-                {
-                    driveDirect(speed, -speed);
-                }
+                // always turn the same direction after back up
+                for (int j = 0; j < 12; j++) {
+                    driveDirect( -speed, speed );
+                    readSensors(SENSORS_GROUP_ID6);
+                } 
             } else
-            {
-                for (int i = 0; i < howFarToGoBackWhenBumped - 15; i++)
+            { // turn in random direction following back up
+                if (rand.nextBoolean())
                 {
-                    driveDirect(-speed, speed);
+                    for (int j = 0; j < 12; j++)
+                    {
+                        driveDirect(speed, -speed);
+                        readSensors(SENSORS_GROUP_ID6);
+                    }
+                } else
+                {
+                    for (int i = 0; i < 12; i++)
+                    {
+                        driveDirect(-speed, speed);
+                        readSensors(SENSORS_GROUP_ID6);
+                    }
                 }
             }
         } else
-        {
-            if (isBumpRight())
+        { // side bump
+            if (isBumpLeft())
             {
                 for (int i = 0; i < howFarToGoBackWhenBumped / 2; i++)
-                {
-                    driveDirect(-150, -50);
+                { // reverse to left
+                    driveDirect(-50, -150);
                     dashboard.speak("bada boom");
                     readSensors(SENSORS_GROUP_ID6);
                 }
             }
-            if (isBumpLeft())
+            if (isBumpRight())
             {
                 for (int i = 0; i < howFarToGoBackWhenBumped / 2; i++)
-                {
-                    driveDirect(-50, -150);
+                {// reverse to right
+                    driveDirect(-150, -50);
                     dashboard.speak("ping pop");
                     readSensors(SENSORS_GROUP_ID6);
                 }
             }
         }
-        if ( count++ % 100 == 0) {
+        if (iRSearch && count % 100 == 0)
+        { // call the beacon search every 100th iteration
             smBeaconSearcher();
         }
+        //  go forward
         driveDirect(speed, speed);
+        count++;
     }
 
 //    @Override
@@ -125,19 +142,19 @@ public class Lada extends IRobotCreateAdapter
 //    }
     private void smBeaconSearcher() throws ConnectionLostException
     {
-        // readSensors(SENSORS_GROUP_ID6);
+        readSensors(SENSORS_GROUP_ID6);
         dashboard.speak("bacon");
         int iRbyte = this.getInfraredByte();
         dashboard.log("irb=" + iRbyte);
-        int startAngle = getAngle();
-        for (int i = 0; iRbyte == 255 && i < 180;i++)
+        //int startAngle = getAngle();
+        for (int i = 0; iRbyte == 255 && i < 69; i++)
         {
             readSensors(SENSORS_GROUP_ID6);
             iRbyte = this.getInfraredByte();
-            int currentAngle = getAngle();
+            //int currentAngle = getAngle();
             
-            dashboard.log("currentAngle= " + currentAngle);
-            driveDirect(50, -50);
+            //dashboard.log("currentAngle= " + currentAngle);
+            driveDirect(200, -200);
         }
         if (iRbyte == 252)
         {
@@ -185,7 +202,7 @@ public class Lada extends IRobotCreateAdapter
             {
                 driveDirect(25, 75);
             }
-           
+            
         }
     }
 }
